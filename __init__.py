@@ -103,8 +103,7 @@ class PlaybackControlSkill(CommonPlaySkill):
 
     def converse(self, utterances, lang="en-us"):
         if (utterances and self.has_played and
-                self.voc_match_exact(utterances[0], "converse_resume",
-                                     exact=True)):
+                self.voc_match(utterances[0], "converse_resume", exact=True)):
             # NOTE:  voc_match() will overmatch (e.g. it'll catch "play next
             #        song" or "play Some Artist")
             self.audio_service.resume()
