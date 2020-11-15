@@ -262,7 +262,7 @@ class PlaybackControlSkill(CommonPlaySkill):
             best = None
             ties = []
             self.log.debug("CommonPlay Resolution: {}".format(search_phrase))
-            for handler in self.query_replies[search_phrase]:
+            for handler in self.query_replies.get(search_phrase) or []:
                 self.log.debug("    {} using {}".format(handler["conf"],
                                                         handler["skill_id"]))
                 if not best or handler["conf"] > best["conf"]:
