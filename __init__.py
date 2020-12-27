@@ -14,17 +14,20 @@
 import random
 from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler
-from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel, \
-    CPSTrackStatus, CPSMatchType
+from ovos_utils.waiting_for_mycroft.common_play import CommonPlaySkill, \
+    CPSMatchLevel, CPSTrackStatus, CPSMatchType
 from mycroft.skills.audioservice import AudioService
 from threading import Lock
+from mycroft.messagebus.message import Message
+from mycroft.configuration import LocalConf, USER_CONFIG
+
 
 STATUS_KEYS = ['track', 'artist', 'album', 'image']
 
 
-class PlaybackControlSkill(CommonPlaySkill):
+class BetterPlaybackControlSkill(CommonPlaySkill):
     def __init__(self):
-        super(PlaybackControlSkill, self).__init__('Playback Control Skill')
+        super(BetterPlaybackControlSkill, self).__init__('Playback Control Skill')
         self.query_replies = {}  # cache of received replies
         self.query_extensions = {}  # maintains query timeout extensions
         self.has_played = False
@@ -47,13 +50,42 @@ class PlaybackControlSkill(CommonPlaySkill):
         self.gui.register_handler('prev', self.handle_prev)
 
         self.clear_gui_info()
+        # check for conflicting skills just in case
+        # done after all skills loaded to ensure proper shutdown
+        self.add_event("mycroft.skills.initialized",
+                       self.blacklist_default_skill)
 
-    # Handle common audio intents.  'Audio' skills should listen for the
-    # common messages:
-    #   self.add_event('mycroft.audio.service.next', SKILL_HANDLER)
-    #   self.add_event('mycroft.audio.service.prev', SKILL_HANDLER)
-    #   self.add_event('mycroft.audio.service.pause', SKILL_HANDLER)
-    #   self.add_event('mycroft.audio.service.resume', SKILL_HANDLER)
+    # blacklisting official skill
+    def get_intro_message(self):
+        # blacklist conflicting skills on install
+        self.blacklist_default_skill()
+
+    def blacklist_default_skill(self):
+        # load the current list of already blacklisted skills
+        blacklist = self.config_core["skills"]["blacklisted_skills"]
+
+        # check the folder name (skill_id) of the skill you want to replace
+        skill_id = "mycroft-playback-control.mycroftai"
+
+        # add the skill to the blacklist
+        if skill_id not in blacklist:
+            self.log.debug("Blacklisting official mycroft skill")
+            blacklist.append(skill_id)
+
+            # load the user config file (~/.mycroft/mycroft.conf)
+            conf = LocalConf(USER_CONFIG)
+            if "skills" not in conf:
+                conf["skills"] = {}
+
+            # update the blacklist field
+            conf["skills"]["blacklisted_skills"] = blacklist
+
+            # save the user config file
+            conf.store()
+
+        # tell the intent service to unload the skill in case it was loaded already
+        # this should avoid the need to restart
+        self.bus.emit(Message("detach_skill", {"skill_id": skill_id}))
 
     def clear_gui_info(self):
         """Clear the gui variable list."""
@@ -399,4 +431,4 @@ class PlaybackControlSkill(CommonPlaySkill):
 
 
 def create_skill():
-    return PlaybackControlSkill()
+    return BetterPlaybackControlSkill()
