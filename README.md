@@ -1,5 +1,5 @@
 # <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/play.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Playback Control
-Common playback control system
+Better Common playback control system
 
 ## About
 This Skill doesn't do anything by itself, but it provides an important common
@@ -10,7 +10,21 @@ common terminology such as "pause".
 
 Additionally, this implements the common Play handler.  This allows playback
 services to negotiate which is best suited to play back a specific request.
-This capability is used by the [Spotify](https://github.com/forslund/spotify-skill) and [Pandora](https://github.com/mycroftai/pianobar-skill) Skills, among others.
+
+What's New??
+- Track Status - [skill-playback-control/pull/35](https://github.com/MycroftAI/skill-playback-control/pull/35)
+    - better handling of playback status, see [MycroftAI/mycroft-core#2619](https://github.com/MycroftAI/mycroft-core/pull/2619) and [MycroftAI/mycroft-core#2674](https://github.com/MycroftAI/mycroft-core/pull/2674)
+- MatchType - [skill-playback-control/pull/32](https://github.com/MycroftAI/skill-playback-control/pull/32) and [mycroft-core/pull/2660](https://github.com/MycroftAI/mycroft-core/pull/2660)
+    - playback now has a "media type" see [mycroft-core/issues/2658](https://github.com/MycroftAI/mycroft-core/issues/2658)
+    - depending on intent additional info is used to help playback selection
+    - integrates with video / media skills, no longer focused on music only
+- Resume - [skill-playback-control/pull/38](https://github.com/MycroftAI/skill-playback-control/pull/38)
+    - When told to "play" if music is paused now it restarts see [skill-playback-control/issues/18](https://github.com/MycroftAI/skill-playback-control/issues/18)
+- Timeout - [skill-playback-control/pull/33](https://github.com/MycroftAI/skill-playback-control/pull/33)
+    - improves the common play framework handling, timeout is now configurable,
+      default is 5 seconds, previoulsy many skills failed to play because 
+      the timeout was too small
+
 
 ## Examples
 * "Play my summer playlist"
@@ -21,14 +35,33 @@ This capability is used by the [Spotify](https://github.com/forslund/spotify-ski
 * "Next track"
 * "Previous track"
 * "Previous song"
+* "Play NASA TV channel"
+* "Play Soma FM internet radio"
+* "Play a cat video"
+* "Play This Week in Tech podcast"
+* "Play Portuguese News"
+* "Play music the gods made heavy metal"
+* "Play a horror movie"
+* "Play a lovecraft audiobook"
+* "Play dagon lovecraft visual comic"
+* "Play game Planet Fall"
+* "Play trailer for The Land Before Time"
+* "Play {your favorite category} porn"
 
 ## Credits
 Mycroft AI (@MycroftAI)
+Jarbas AI
 
 ## Category
-**Music**
+**Media**
 
 ## Tags
+#movies
+#audiobooks
+#podcasts
+#games
+#video
+#media
 #music
 #play
 #playback

@@ -98,14 +98,14 @@ class BetterPlaybackControlSkill(CommonPlaySkill):
         self.playback_status = CPSTrackStatus.END_OF_MEDIA
 
     @intent_handler(IntentBuilder('NextCommonPlay')
-        .require('Next').one_of("Track", "Playing").require(
-        "Playlist"))
+        .require('Next').one_of("Track", "Playing")
+        .require("Playlist"))
     def handle_next(self, message):
         self.audio_service.next()
 
     @intent_handler(IntentBuilder('PrevCommonPlay')
-        .require('Prev').one_of("Track", "Playing").require(
-        "Playlist"))
+                    .require('Prev').one_of("Track", "Playing")
+                    .require("Playlist"))
     def handle_prev(self, message):
         self.audio_service.prev()
 
