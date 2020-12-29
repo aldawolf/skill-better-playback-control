@@ -1,4 +1,4 @@
-# <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/play.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Playback Control
+# <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/play.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Better Playback Control
 Better Common playback control system
 
 NOTE: this is meant a better alternative to the official playback control skill, it will be blacklisted
