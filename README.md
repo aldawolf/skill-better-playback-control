@@ -1,6 +1,8 @@
 # <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/play.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Playback Control
 Better Common playback control system
 
+NOTE: this is meant a better alternative to the official playback control skill, it will be blacklisted
+
 ## About
 This Skill doesn't do anything by itself, but it provides an important common
 language for audio playback skills.  By handling simple phrases like
