@@ -1,23 +1,29 @@
 import random
+from os.path import join, dirname
 from adapt.intent import IntentBuilder
 from mycroft.skills.core import intent_handler
 from mycroft.messagebus.message import Message
 from ovos_utils.waiting_for_mycroft.base_skill import MycroftSkill
-from ovos_utils.playback import CPSMatchType, CPSPlayback, CPSMatchConfidence,\
+from ovos_utils.playback import CPSMatchType, CPSPlayback, CPSMatchConfidence, \
     BetterCommonPlayInterface, CPSTrackStatus
+from ovos_utils.playback.youtube import is_youtube, get_youtube_metadata, \
+    get_youtube_video_stream
 from ovos_utils.gui import is_gui_connected, GUIInterface
+from ovos_utils.json_helper import merge_dict
+from ovos_utils.log import LOG
+from pprint import pprint
 
 
 class BetterPlaybackControlSkill(MycroftSkill):
 
     def initialize(self):
         # TODO skill settings for these values
-        self.cps = BetterCommonPlayInterface(bus=self.bus,
-                                             max_timeout=3, min_timeout=1.5)
         self.prefer_gui = False  # not recommended
         self.ignore_gui = False
-        # TODO remote_server support, ping @aix for details
-        self.gui = GUIInterface(self.skill_id, bus=self.bus)
+        self.compatibility_mode = True
+        self.cps = BetterCommonPlayInterface(
+            bus=self.bus, backwards_compatibility=self.compatibility_mode,
+            max_timeout=3, min_timeout=1.5)
 
     def stop(self, message=None):
         # will stop any playback in GUI or AudioService
@@ -132,19 +138,12 @@ class BetterPlaybackControlSkill(MycroftSkill):
 
         if not results:
             self.speak_dialog("cant.play",
-                              data={"phrase": search_phrase,
+                              data={"phrase": phrase,
                                     "media_type": media_type})
             return
 
-        # send all results for disambiguation
-        # this can be used in GUI or any other use facing interface to
-        # override the final selection
-        for r in results:
-            status = dict(r)
-            status["status"] = CPSTrackStatus.DISAMBIGUATION
-            self.bus.emit(Message('better_cps.status.update', status))
-
         best = self.select_best(results)
+        self.cps.update_search_results(results, best)
         self.enclosure.mouth_reset()
         self.set_context("Playing")
         self.cps.play(best)
@@ -155,7 +154,8 @@ class BetterPlaybackControlSkill(MycroftSkill):
         best = None
         ties = []
         for handler in results:
-            if not best or handler['match_confidence'] > best['match_confidence']:
+            if not best or handler['match_confidence'] > best[
+                'match_confidence']:
                 best = handler
                 ties = [best]
             elif handler['match_confidence'] == best['match_confidence']:
@@ -177,7 +177,6 @@ class BetterPlaybackControlSkill(MycroftSkill):
             # TODO: Ask user to pick between ties or do it automagically
         else:
             selected = best
-
         return selected
 
 

@@ -1,3 +1,0 @@
-reproduce (?P<Phrase>.*)
-empieza (?P<Phrase>.*)
-para (?P<Phrase>.*)
