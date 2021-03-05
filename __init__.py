@@ -23,7 +23,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
         self.compatibility_mode = False
         self.cps = BetterCommonPlayInterface(
             bus=self.bus, backwards_compatibility=self.compatibility_mode,
-            max_timeout=3, min_timeout=2)
+            media_fallback=False, max_timeout=6, min_timeout=3)
 
         self.add_event("better_cps.play", self.handle_play_request)
 
@@ -34,54 +34,67 @@ class BetterPlaybackControlSkill(MycroftSkill):
     # play xxx intents
     @intent_handler("play.intent")
     def generic_play(self, message):
+        LOG.debug("Generic BetterCPS match")
         self._play(message, CPSMatchType.GENERIC)
 
     @intent_handler("music.intent")
     def play_music(self, message):
+        LOG.debug("Music BetterCPS match")
         self._play(message, CPSMatchType.MUSIC)
 
     @intent_handler("video.intent")
     def play_video(self, message):
+        LOG.debug("Video BetterCPS match")
         self._play(message, CPSMatchType.VIDEO)
 
     @intent_handler("audiobook.intent")
     def play_audiobook(self, message):
+        LOG.debug("AudioBook BetterCPS match")
         self._play(message, CPSMatchType.AUDIOBOOK)
 
     @intent_handler("game.intent")
     def play_game(self, message):
+        LOG.debug("Game BetterCPS match")
         self._play(message, CPSMatchType.GAME)
 
     @intent_handler("radio.intent")
     def play_radio(self, message):
+        LOG.debug("Radio BetterCPS match")
         self._play(message, CPSMatchType.RADIO)
 
     @intent_handler("podcast.intent")
     def play_podcast(self, message):
+        LOG.debug("Podcast BetterCPS match")
         self._play(message, CPSMatchType.PODCAST)
 
     @intent_handler("news.intent")
     def play_news(self, message):
+        LOG.debug("News BetterCPS match")
         self._play(message, CPSMatchType.NEWS)
 
     @intent_handler("tv.intent")
     def play_tv(self, message):
+        LOG.debug("TV BetterCPS match")
         self._play(message, CPSMatchType.TV)
 
     @intent_handler("movie.intent")
     def play_movie(self, message):
+        LOG.debug("Movie BetterCPS match")
         self._play(message, CPSMatchType.MOVIE)
 
     @intent_handler("movietrailer.intent")
     def play_trailer(self, message):
+        LOG.debug("Trailer BetterCPS match")
         self._play(message, CPSMatchType.TRAILER)
 
     @intent_handler("porn.intent")
     def play_adult(self, message):
+        LOG.debug("Porn BetterCPS match")
         self._play(message, CPSMatchType.ADULT)
 
     @intent_handler("comic.intent")
     def play_comic(self, message):
+        LOG.debug("ComicBook BetterCPS match")
         self._play(message, CPSMatchType.VISUAL_STORY)
 
     # playback control intents
@@ -133,7 +146,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
         # Now we place a query on the messsagebus for anyone who wants to
         # attempt to service a 'play.request' message.
         results = []
-        for r in self.cps.search(phrase):
+        for r in self.cps.search(phrase, media_type=media_type):
             results += r["results"]
 
         # filter GUI only results if GUI not connected
@@ -183,6 +196,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
             # TODO: Ask user to pick between ties or do it automagically
         else:
             selected = best
+        LOG.debug(f"BetterCPS selected: {selected['skill_id']} - {selected['match_confidence']}")
         return selected
 
     # messagebus request to play track
