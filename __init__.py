@@ -20,10 +20,12 @@ class BetterPlaybackControlSkill(MycroftSkill):
         # TODO skill settings for these values
         self.prefer_gui = False  # not recommended
         self.ignore_gui = False
-        self.compatibility_mode = True
+        self.compatibility_mode = False
         self.cps = BetterCommonPlayInterface(
             bus=self.bus, backwards_compatibility=self.compatibility_mode,
-            max_timeout=3, min_timeout=1.5)
+            max_timeout=3, min_timeout=2)
+
+        self.add_event("better_cps.play", self.handle_play_request)
 
     def stop(self, message=None):
         # will stop any playback in GUI or AudioService
@@ -115,6 +117,9 @@ class BetterPlaybackControlSkill(MycroftSkill):
 
     def _play(self, message, media_type=CPSMatchType.GENERIC):
         phrase = message.data.get("query", "")
+        num = message.data.get("number", "")
+        if num:
+            phrase += " " + num
 
         # if media is currently paused, empty string means "resume playback"
         if self.should_resume(phrase):
@@ -143,6 +148,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
             return
 
         best = self.select_best(results)
+
         self.cps.update_search_results(results, best)
         self.enclosure.mouth_reset()
         self.set_context("Playing")
@@ -178,6 +184,15 @@ class BetterPlaybackControlSkill(MycroftSkill):
         else:
             selected = best
         return selected
+
+    # messagebus request to play track
+    def handle_play_request(self, message):
+        tracks = message.data["tracks"]
+        self.set_context("Playing")
+        # TODO cps.queue / playlist support
+        self.cps.update_playlist(tracks)
+        self.cps.update_search_results(tracks)
+        self.cps.play(tracks[0])
 
 
 def create_skill():
