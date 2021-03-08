@@ -21,9 +21,11 @@ class BetterPlaybackControlSkill(MycroftSkill):
         self.prefer_gui = False  # not recommended
         self.ignore_gui = False
         self.compatibility_mode = False
+        self.media_type_fallback = True
         self.cps = BetterCommonPlayInterface(
             bus=self.bus, backwards_compatibility=self.compatibility_mode,
-            media_fallback=False, max_timeout=6, min_timeout=3)
+            media_fallback=self.media_type_fallback,
+            max_timeout=6, min_timeout=2)
 
         self.add_event("better_cps.play", self.handle_play_request)
 
@@ -162,10 +164,9 @@ class BetterPlaybackControlSkill(MycroftSkill):
 
         best = self.select_best(results)
 
-        self.cps.update_search_results(results, best)
+        self.cps.process_search(best, results)
         self.enclosure.mouth_reset()
         self.set_context("Playing")
-        self.cps.play(best)
 
     def select_best(self, results):
         # Look at any replies that arrived before the timeout
@@ -207,6 +208,9 @@ class BetterPlaybackControlSkill(MycroftSkill):
         self.cps.update_playlist(tracks)
         self.cps.update_search_results(tracks)
         self.cps.play(tracks[0])
+
+    def shutdown(self):
+        self.cps.shutdown()
 
 
 def create_skill():
