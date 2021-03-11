@@ -58,7 +58,10 @@ class BetterPlaybackControlSkill(MycroftSkill):
     def play_radio_drama(self, message):
         LOG.debug("Radio Theatre BetterCPS match")
         # TODO new type in next ovos_utils alpha release
-        self._play(message, CPSMatchType.AUDIOBOOK)
+        try:
+            self._play(message, CPSMatchType.RADIO_THEATRE)
+        except:
+            self._play(message, CPSMatchType.AUDIOBOOK)
 
     @intent_handler("game.intent")
     def play_game(self, message):
