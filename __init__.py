@@ -102,6 +102,14 @@ class BetterPlaybackControlSkill(MycroftSkill):
         LOG.debug("Movie BetterCPS match")
         self._play(message, CPSMatchType.MOVIE)
 
+    @intent_handler("short_movie.intent")
+    def play_short_movie(self, message):
+        LOG.debug("Short Movie BetterCPS match")
+        try:
+            self._play(message, CPSMatchType.SHORT_FILM)
+        except:
+            self._play(message, CPSMatchType.MOVIE)
+
     @intent_handler("movietrailer.intent")
     def play_trailer(self, message):
         LOG.debug("Trailer BetterCPS match")
