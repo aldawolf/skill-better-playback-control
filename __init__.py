@@ -63,6 +63,15 @@ class BetterPlaybackControlSkill(MycroftSkill):
         except:
             self._play(message, CPSMatchType.AUDIOBOOK)
 
+    @intent_handler("behind_scenes.intent")
+    def play_behind_scenes(self, message):
+        LOG.debug("Behind the Scenes BetterCPS match")
+        # TODO new type in next ovos_utils alpha release
+        try:
+            self._play(message, CPSMatchType.BEHIND_THE_SCENES)
+        except:
+            self._play(message, CPSMatchType.VIDEO)
+
     @intent_handler("game.intent")
     def play_game(self, message):
         LOG.debug("Game BetterCPS match")
