@@ -54,6 +54,12 @@ class BetterPlaybackControlSkill(MycroftSkill):
         LOG.debug("AudioBook BetterCPS match")
         self._play(message, CPSMatchType.AUDIOBOOK)
 
+    @intent_handler("radio_drama.intent")
+    def play_radio_drama(self, message):
+        LOG.debug("Radio Theatre BetterCPS match")
+        # TODO new type in next ovos_utils alpha release
+        self._play(message, CPSMatchType.AUDIOBOOK)
+
     @intent_handler("game.intent")
     def play_game(self, message):
         LOG.debug("Game BetterCPS match")
@@ -98,6 +104,11 @@ class BetterPlaybackControlSkill(MycroftSkill):
     def play_comic(self, message):
         LOG.debug("ComicBook BetterCPS match")
         self._play(message, CPSMatchType.VISUAL_STORY)
+
+    @intent_handler("documentaries.intent")
+    def play_documentaries(self, message):
+        LOG.debug("Documentaries BetterCPS match")
+        self._play(message, CPSMatchType.DOCUMENTARY)
 
     # playback control intents
     @intent_handler(IntentBuilder('NextCommonPlay')
