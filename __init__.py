@@ -25,7 +25,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
         self.cps = BetterCommonPlayInterface(
             bus=self.bus, backwards_compatibility=self.compatibility_mode,
             media_fallback=self.media_type_fallback,
-            max_timeout=6, min_timeout=2)
+            max_timeout=7, min_timeout=3)
 
         self.add_event("better_cps.play", self.handle_play_request)
 
@@ -107,6 +107,22 @@ class BetterPlaybackControlSkill(MycroftSkill):
         LOG.debug("Short Movie BetterCPS match")
         try:
             self._play(message, CPSMatchType.SHORT_FILM)
+        except:
+            self._play(message, CPSMatchType.MOVIE)
+
+    @intent_handler("silent_movie.intent")
+    def play_silent_movie(self, message):
+        LOG.debug("Silent Movie BetterCPS match")
+        try:
+            self._play(message, CPSMatchType.SILENT_MOVIE)
+        except:
+            self._play(message, CPSMatchType.MOVIE)
+
+    @intent_handler("bw_movie.intent")
+    def play_bw_movie(self, message):
+        LOG.debug("Black&White Movie BetterCPS match")
+        try:
+            self._play(message, CPSMatchType.BLACK_WHITE_MOVIE)
         except:
             self._play(message, CPSMatchType.MOVIE)
 
