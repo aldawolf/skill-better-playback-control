@@ -52,7 +52,10 @@ class BetterPlaybackControlSkill(MycroftSkill):
     @intent_handler("audio.intent")
     def play_audio(self, message):
         LOG.debug("Audio BetterCPS match")
-        self._play(message, CPSMatchType.AUDIO)
+        try:
+            self._play(message, CPSMatchType.AUDIO)
+        except:
+            self._play(message, CPSMatchType.MUSIC)
 
     @intent_handler("audiobook.intent")
     def play_audiobook(self, message):
