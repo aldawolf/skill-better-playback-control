@@ -18,8 +18,8 @@ class BetterPlaybackControlSkill(MycroftSkill):
 
     def initialize(self):
         # TODO skill settings for these values
-        self.prefer_gui = False  # not recommended
-        self.ignore_gui = False
+        self.gui_only = False  # not recommended
+        self.audio_only = False
         self.compatibility_mode = False
         self.media_type_fallback = True
         self.cps = BetterCommonPlayInterface(
@@ -205,7 +205,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
 
         # filter GUI only results if GUI not connected
         gui_connected = is_gui_connected(self.bus)
-        if self.ignore_gui or not gui_connected:
+        if self.audio_only or not gui_connected:
             results = [r for r in results if r["playback"] != CPSPlayback.GUI]
 
         if not results:
@@ -236,7 +236,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
             # select randomly
             selected = random.choice(ties)
 
-            if self.prefer_gui:
+            if self.gui_only:
                 # select only from GUI results if preference is set
                 # WARNING this can effectively make it so that the same
                 # skill is always selected
