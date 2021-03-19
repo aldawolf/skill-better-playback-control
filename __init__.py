@@ -49,6 +49,11 @@ class BetterPlaybackControlSkill(MycroftSkill):
         LOG.debug("Video BetterCPS match")
         self._play(message, CPSMatchType.VIDEO)
 
+    @intent_handler("audio.intent")
+    def play_audio(self, message):
+        LOG.debug("Audio BetterCPS match")
+        self._play(message, CPSMatchType.AUDIO)
+
     @intent_handler("audiobook.intent")
     def play_audiobook(self, message):
         LOG.debug("AudioBook BetterCPS match")
@@ -221,8 +226,7 @@ class BetterPlaybackControlSkill(MycroftSkill):
         best = None
         ties = []
         for handler in results:
-            if not best or handler['match_confidence'] > best[
-                'match_confidence']:
+            if not best or handler['match_confidence'] > best['match_confidence']:
                 best = handler
                 ties = [best]
             elif handler['match_confidence'] == best['match_confidence']:
